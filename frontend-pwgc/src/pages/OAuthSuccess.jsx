@@ -1,4 +1,3 @@
-// src/pages/OAuthSuccess.jsx
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -10,15 +9,22 @@ const OAuthSuccess = () => {
 
   useEffect(() => {
     const token = params.get('token')
-    if (token) {
-      // Décodage du payload JWT (attention, ne pas utiliser dans un environnement production sans vérification)
-      const payload = JSON.parse(atob(token.split('.')[1]))
-      login({ ...payload, token })
-      navigate('/dashboard')
-    }
-  }, [])
+    console.log('Token reçu depuis l’URL :', token)
 
-  return <p>Connexion OAuth en cours...</p>
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]))
+        console.log('Payload JWT :', payload)
+        login({ ...payload, token })
+        navigate('/dashboard')
+      } catch (error) {
+        console.error('Erreur token :', error)
+        navigate('/login')
+      }
+    }
+  }, [login, navigate, params])
+
+  return <h2 style={{ textAlign: 'center', marginTop: '2rem' }}>Connexion OAuth en cours...</h2>
 }
 
 export default OAuthSuccess
